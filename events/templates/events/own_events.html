@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>My Events</h1>
+    <a href="{% url 'event_create' %}" class="btn btn-primary">Create New Event</a>
+
+        <ul>
+            {% for event in events %}
+                <li class="container">
+                    <h2>{{ event.title }}</h2>
+                    <p>Description:</p>
+                    <div class="description-container">
+                        <p>{{ event.description }}</p>
+                    </div>
+                    <ul class="event-details">
+                        <li><p>Date: {{ event.date|date:"Y-m-d" }}</p></li>
+                        <li><p>Time: {{ event.date|date:"H:i" }}</p></li>
+                        <li><p>Location: {{ event.location }}</p></li>
+                    </ul>
+                    {% if not event.members.all %}
+                        <p>No members have joined this event yet.</p>
+                    {% else %}
+                        <p>Members: 
+                            <div class="description-container">
+                                {% for member in event.members.all %}
+                                    {{ member.username }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </p>
+                    {% endif %}
+
+                    {% if event.pending_requests_count > 0 %}
+                        <a href="{% url 'manage_requests' event.pk %}" class="btn btn-secondary">
+                            Manage Requests  ({{ event.pending_requests_count }})
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'event_update' event.pk %}" class="btn btn-primary">Edit</a>
+                    <form action="{% url 'event_delete' event.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </li><br>
+            {% empty %}
+                <p>You have no events.</p>
+            {% endfor %}
+        </ul>
+</div>
+{% endblock %}

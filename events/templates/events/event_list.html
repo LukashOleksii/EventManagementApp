@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Event List{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Event List</h1>
+    <ul class="event-list">
+        {% for event in events %}
+            <li class="event-item container">
+                <h2>{{ event.title }}</h2>
+
+                <p>Description:</p>
+                <div class="description-container">
+                    <p>{{ event.description }}</p>
+                </div>
+                <ul class="event-details">
+                    <li><p>Date: {{ event.date|date:"Y-m-d" }}</p></li>
+                    <li><p>Time: {{ event.date|date:"H:i" }}</p></li>
+                    <li><p>Location: {{ event.location }}</p></li>
+                </ul>
+            </li><br>
+        {% empty %}
+            <p>No events found.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

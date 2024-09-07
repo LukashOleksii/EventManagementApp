@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+        <h1>Available Events</h1>
+        <ul>
+            {% for event in events %}
+                <li class="container">
+                    <h2>{{ event.title }}</h2>
+                    <p>Description:</p>
+                    <div class="description-container">
+                        <p>{{ event.description }}</p>
+                    </div>
+                    <ul class="event-details">
+                        <li><p>Date: {{ event.date|date:"Y-m-d" }}</p></li>
+                        <li><p>Time: {{ event.date|date:"H:i" }}</p></li>
+                        <li><p>Location: {{ event.location }}</p></li>
+                    </ul>
+                    {% if not event.members.all %}
+                        <p>No members have joined this event yet.</p>
+                    {% else %}
+                        <p>Members: 
+                            <div class="description-container">
+                            
+                                {% for member in event.members.all %}
+                                    {{ member.username }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </p>
+                    {% endif %}
+
+                    <p>Organizer: {{ event.organizer.username }}</p>
+                    {% if event.pending_request %}
+                        <b>Your request is waiting for approval.</b>
+                        <form action="{% url 'cancel_request' event.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Cancel Request</button>
+                        </form>
+                    {% elif user in event.members.all %}
+                        <form action="{% url 'leave_event' event.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Leave the Event</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'join_event' event.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Take Part in the Event</button>
+                        </form>
+                    {% endif %}
+                    
+                </li><br>
+            {% endfor %}
+        </ul>
+</div>
+{% endblock %}

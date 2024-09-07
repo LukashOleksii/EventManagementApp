@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="">
+        <h1>Events I Take Part In</h1>
+        <ul>
+            {% for event in events %}
+                <li class="container">
+                    <h2>{{ event.title }}</h2>
+                    <p>Description:</p>
+                    <div class="description-container">
+                        <p>{{ event.description }}</p>
+                    </div>
+                    <ul class="event-details">
+                        <li><p>Date: {{ event.date|date:"Y-m-d" }}</p></li>
+                        <li><p>Time: {{ event.date|date:"H:i" }}</p></li>
+                        <li><p>Location: {{ event.location }}</p></li>
+                    </ul>
+                    {% if not event.members.all %}
+                        <p>No members have joined this event yet.</p>
+                    {% else %}
+
+                        <p>Members: 
+                            <div class="description-container">
+                                {% for member in event.members.all %}
+                                    {{ member.username }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </p>
+                    {% endif %}
+
+                    <p>Organizer: {{ event.organizer.username }}</p>
+                    <form action="{% url 'leave_event' event.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">Leave the Event</button>
+                    </form>
+                </li><br>
+            {% empty %}
+                <p>You are not taking part in any events.</p>
+            {% endfor %}
+        </ul>
+</div>
+{% endblock %}
